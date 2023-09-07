@@ -51,6 +51,10 @@ def check_for_close_substrings(string):
     return any([check_1, check_2])
 
 def convert_to_clean_df(data_dic):
+    # flagging for discussion 
+    """
+    Apply cleaning functions and keep cases with at least 200 words (for annotation set only). 
+    """
     new_l = []
     for case in data_dic:
         case = json.loads(case)
@@ -144,7 +148,7 @@ def save_sample_df(df, output_name, size_sample):
     sample_df = get_samples(df, size_sample)
     sample_df["paragraph"] = sample_df["paragraph"].apply(add_paragraph_text)
     sample_df = sample_df[["id", "section_id", "url", "name", "paragraph", "diff", "formal_words", "grand_words", "formal_count", "grand_count"]]
-    sample_df.to_json(os.path.join(os.getcwd(), 'prodigy', output_name),
+    sample_df.to_json(os.path.join(os.getcwd(), 'prodigy', f"{output_name}.json"),
             orient="records",
             lines=True)
     return sample_df
@@ -181,7 +185,7 @@ def main():
     print("Saving sample.")
     sample_df = save_sample_df(paragraph_df, output_name, size_sample)
 
-    sample_df.to_csv(os.path.join(os.getcwd(), 'prodigy', f"{output_name.split('.')[0]}.csv"))
+    sample_df.to_csv(os.path.join(os.getcwd(), 'prodigy', f"{output_name}.csv"))
 
     return sample_df
 
