@@ -1,6 +1,6 @@
 # legal-interpretation
 
-1. Filter cases to only those decided on or after 1870.  
+1. Filter cases to only those decided by the US Supreme Court on or after 1870.  
 `python filter_cases.py`
 
 2. Collect samples of data for annotation.  
