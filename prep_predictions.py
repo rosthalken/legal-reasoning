@@ -48,7 +48,7 @@ def check_for_close_substrings(string):
     check_2 = re.search(r'(constru|interpret|reading|understand|mean).{0,200}(statute|legislation|\sact[\.|\s|,|;])', string.lower())
     return any([check_1, check_2])
 
-def convert_to_clean_df(data_dic):
+def convert_to_clean_df(data_dic): # new function
     """
     Preprocess the text, including finding opinion-level data and replacing citations with "CITE".
     """
@@ -63,12 +63,12 @@ def convert_to_clean_df(data_dic):
         court_url = case["court"]["url"]
 
         soup = BeautifulSoup(case["casebody"]["data"], "html.parser")
-        opinions = soup.find_all("opinion")
+        opinions = soup.find_all("opinion") # find *ALL*
         print(f"opinion number: {len(opinions)}")
         for opinion in opinions:
+            # collect necessary opinion metadata
             author_names = []
             author_ids = []
-            # collect necessary opinion metadata
             opinion_type = opinion["type"]
             opinion_text = opinion.text
             pretty_text = find_and_replace_citations(opinion_text)
