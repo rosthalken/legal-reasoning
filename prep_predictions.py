@@ -53,22 +53,24 @@ def convert_to_clean_df(data_dic): # new function
     Preprocess the text, including finding opinion-level data and replacing citations with "CITE".
     """
     new_l = []
+    case_count = 0
     for case in data_dic:
+
         case = json.loads(case)
         # collect necessary case metadata
-        id = case["id"]
-        url = case["url"]
+        case_id = case["id"]
+        case_url = case["url"]
         case_name = case["name"]
         date = case["decision_date"]
         court_url = case["court"]["url"]
+        citation = case["citations"]
 
         soup = BeautifulSoup(case["casebody"]["data"], "html.parser")
-        opinions = soup.find_all("opinion") # find *ALL*
+        opinions = soup.find_all("opinion") 
         print(f"opinion number: {len(opinions)}")
+        opinion_count = 0
         for opinion in opinions:
             # collect necessary opinion metadata
-            author_names = []
-            author_ids = []
             opinion_type = opinion["type"]
             opinion_text = opinion.text
             pretty_text = find_and_replace_citations(opinion_text)
@@ -76,19 +78,24 @@ def convert_to_clean_df(data_dic): # new function
             word_count = len(word_tokenize(pretty_text))
             close_stat_interp = check_for_close_substrings(pretty_text)
 
-
+            author_names = []
+            author_ids = []
             authors = opinion.find_all("author")
             print(f"author number: {len(authors)}")
             for author in authors:
-                name = author.text
-                id = author["id"]
-                author_names.append(name)
-                author_ids.append(id)
+                author_name = author.text
+                author_id = author["id"]
+                author_names.append(author_name)
+                author_ids.append(author_id)
             
             opinion_dict = {
-                "id":id,
-                "url":url,
+                "case_id":case_id,
+                "proj_case_id": case_count,
+                "proj_opinion_id":opinion_count,
+                "proj_id": f"{case_count}_{opinion_count}",
+                "case_url":case_url,
                 "case_name":case_name,
+                "citations": citation,
                 "date":date,
                 "court_url":court_url,
                 "opinion_type":opinion_type,
@@ -96,45 +103,17 @@ def convert_to_clean_df(data_dic): # new function
                 "pretty_text":pretty_text,
                 "word_count":word_count,
                 "close_stat_interp":close_stat_interp,
+                "authors_raw":authors,
                 "author_names":author_names,
                 "author_ids":author_ids
             }
-            new_l.append(opinion_dict)
-    df = pd.DataFrame(new_l)
 
+            new_l.append(opinion_dict)
+            opinion_count += 1
+            case_count += 1
+    df = pd.DataFrame(new_l)
     return df
 
-# def convert_to_clean_df(data_dic):
-#     """
-#     Preprocess the text, including finding opinion-level data and replacing citations with "CITE".
-#     """
-#     new_l = []
-#     for case in data_dic:
-#         case = json.loads(case)
-#         soup = BeautifulSoup(case["casebody"]["data"], "html.parser")
-#         try:
-#             case["opinion_type"] = soup.find("opinion")["type"]
-#         except:
-#             case["opinion_type"] = "NA"
-#         try:
-#             case["opinion_author_id"] = soup.find("author")["id"]
-#         except:
-#             case["opinion_author_id"] = "NA"
-#         try:
-#             case["opinion_author_text"] = soup.find("author").text
-#         except:
-#             case["opinion_author_text"] = "NA"
-#         try:
-#             opinion_text = soup.find("opinion").text
-#         except:
-#             opinion_text = "NA"
-#         opinion_text = find_and_replace_citations(opinion_text)
-#         case["pretty_text"] = clean_text(opinion_text)
-#         case["word_count"] = len(word_tokenize(case["pretty_text"]))
-#         new_l.append(case) 
-#     df = pd.DataFrame(new_l)
-#     df["close_stat_interp"] = df.apply(lambda x: check_for_close_substrings(x["pretty_text"]), axis = 1)
-#     return df
 
 def split_to_paragraphs(df):
     """
