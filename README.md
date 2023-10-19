@@ -8,8 +8,7 @@
 
 
 3. Evaluate model performance.  
-TODO: change to testing folder  
-`pyhon model_testing.py`
+A number of files within the `model-testing` folder contain all model testing scripts. 
 
 4. Prepare data for predictions at the paragraph level.  
 `python prep_predictions.py`
