@@ -3,15 +3,8 @@ import numpy as np
 import os
 from collections import Counter
 
-import matplotlib.pyplot as plt
-import seaborn as sns
+from sklearn.metrics import accuracy_score, classification_report
 
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
-from sklearn.metrics import confusion_matrix 
-
-
-# import evaluate
 from datasets import load_dataset, Dataset
 import torch
 
@@ -38,7 +31,7 @@ if not os.path.exists(multi_class_errors_dir):
    os.makedirs(multi_class_errors_dir)
 
 
-models = ["bert", "legal-bert", "distilbert"] # options are legal-bert, distilbert, or bert
+models = ["bert", "legal-bert", "distilbert"]
 epoch_num = 3
 
 
@@ -69,7 +62,7 @@ for model_type in models:
   none_precision_l = []
   none_recall_l = []
 
-  for split in range(0, 30):
+  for split in range(0, 5):
 
     split_id_file = os.path.join(formalism_dir, 'train_test_splits', f'split_{split}')
 

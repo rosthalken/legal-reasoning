@@ -2,7 +2,7 @@ import numpy as np
 import os
 import pandas as pd
 from   pathlib import Path
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
+from sklearn.metrics import  classification_report
 import time
 import torch
 
@@ -13,23 +13,45 @@ import evaluate
 
 formalism_dir = os.getcwd()
 labeled_data_path = os.path.join(formalism_dir, 'labeled_data', 'final_cleaned_paragraphs.csv')
-output_path = os.path.join(formalism_dir, 'results', 't5-small_binary')
+output_path = os.path.join(formalism_dir, 'results', 't5-base')
+
 
 interpretation_df = pd.read_csv(labeled_data_path)
 interpretation_df = interpretation_df[interpretation_df['class'].notna()]
-interpretation_df["interpretation"] = np.where(interpretation_df["class"].isin(["FORMAL", "GRAND"]), "interpretation", "no interpretation")
 
-model_name = 't5-small'
+device_name = 'cuda'
+
+macro_f1_l = []
+macro_precision_l = []
+macro_recall_l = []
+
+weighted_f1_l = []
+weighted_precision_l = []
+weighted_recall_l = []
+
+grand_f1_l = []
+grand_precision_l = []
+grand_recall_l = []
+
+formal_f1_l = []
+formal_precision_l = []
+formal_recall_l = []
+
+none_f1_l = []
+none_precision_l = []
+none_recall_l = []
+
+model_name = 't5-base'
 device = 'cuda'
-tokenizer = AutoTokenizer.from_pretrained(model_name) # load in our tokenizer
+tokenizer = AutoTokenizer.from_pretrained(model_name) 
 
-def preprocess_function(examples, input_text = "paragraph", output_text = "interpretation"):
+def preprocess_function(examples, input_text = "paragraph", output_text = "class"):
     model_inputs = tokenizer(examples[input_text], max_length=1024, truncation=True)
     targets = tokenizer(examples[output_text], max_length=5, truncation=True)
     model_inputs["labels"] = targets["input_ids"]
     return model_inputs
 
-def compare_names(df_row, input_text = "paragraph", output_text = "interpretation"):
+def compare_names(df_row, input_text = "paragraph", output_text = "class"):
   inputs = tokenizer(df_row[input_text], return_tensors="pt")
   result = model.generate(inputs=inputs["input_ids"].to(device), max_new_tokens=50)
   gen_class = tokenizer.decode(result[0], skip_special_tokens = True)
@@ -41,8 +63,6 @@ def compare_names(df_row, input_text = "paragraph", output_text = "interpretatio
       }
   return output
 
-
-device_name = 'cuda'
 macro_f1_l = []
 macro_precision_l = []
 macro_recall_l = []
@@ -51,13 +71,17 @@ weighted_f1_l = []
 weighted_precision_l = []
 weighted_recall_l = []
 
-one_f1_l = []
-one_precision_l = []
-one_recall_l = []
+grand_f1_l = []
+grand_precision_l = []
+grand_recall_l = []
 
-zero_f1_l = []
-zero_precision_l = []
-zero_recall_l = []
+formal_f1_l = []
+formal_precision_l = []
+formal_recall_l = []
+
+none_f1_l = []
+none_precision_l = []
+none_recall_l = []
 
 full_df = pd.DataFrame()
 
@@ -102,13 +126,13 @@ for split in range(0, 5):
     trainer.train()
 
     output = tokenized_test_interp.map(compare_names)
-    result_df = pd.DataFrame(output, columns = ['paragraph', 'interpretation', 'gen_class'])
+    result_df = pd.DataFrame(output, columns = ['paragraph', 'class', 'gen_class'])
     print(result_df["gen_class"].tolist())
 
-    class_report = classification_report(result_df["interpretation"].tolist(), result_df["gen_class"].tolist(), output_dict=True)
+    class_report = classification_report(result_df["class"].tolist(), result_df["gen_class"].tolist(), output_dict=True)
 
     sample_dict = {
-        "model": "t5_small_finetuned_binary",
+        "model": "t5_finetuned",
         "split": split,
 
         "macro_f1": round(class_report["macro avg"]["f1-score"], 3),
@@ -119,17 +143,22 @@ for split in range(0, 5):
         "weighted_precision": round(class_report["weighted avg"]["precision"], 3),
         "weighted_recall": round(class_report["weighted avg"]["recall"], 3),
 
-        "1_f1": round(class_report["interpretation"]["f1-score"], 3),
-        "1_precision": round(class_report["interpretation"]["precision"], 3),
-        "1_recall": round(class_report["interpretation"]["recall"], 3),
+        "grand_f1": round(class_report["GRAND"]["f1-score"], 3),
+        "grand_precision": round(class_report["GRAND"]["precision"], 3),
+        "grand_recall": round(class_report["GRAND"]["recall"], 3),
 
-        "0_f1": round(class_report["no interpretation"]["f1-score"], 3),
-        "0_precision": round(class_report["no interpretation"]["precision"], 3),
-        "0_recall": round(class_report["no interpretation"]["recall"], 3),
+        "formal_f1": round(class_report["FORMAL"]["f1-score"], 3),
+        "formal_precision": round(class_report["FORMAL"]["precision"], 3),
+        "formal_recall": round(class_report["FORMAL"]["recall"], 3),
+
+        "none_f1": round(class_report["NONE"]["f1-score"], 3),
+        "none_precision": round(class_report["NONE"]["precision"], 3),
+        "none_recall": round(class_report["NONE"]["recall"], 3),
     }
 
     new_row = pd.DataFrame(sample_dict, index = [0])
     full_df = pd.concat([full_df, new_row])
+
 
     macro_f1_l.append(class_report["macro avg"]["f1-score"])
     macro_precision_l.append(class_report["macro avg"]["precision"])
@@ -139,13 +168,17 @@ for split in range(0, 5):
     weighted_precision_l.append(class_report["weighted avg"]["precision"])
     weighted_recall_l.append(class_report["weighted avg"]["recall"])
 
-    one_f1_l.append(class_report["interpretation"]["f1-score"])
-    one_precision_l.append(class_report["interpretation"]["precision"])
-    one_recall_l.append(class_report["interpretation"]["recall"])
+    grand_f1_l.append(class_report["GRAND"]["f1-score"])
+    grand_precision_l.append(class_report["GRAND"]["precision"])
+    grand_recall_l.append(class_report["GRAND"]["recall"])
 
-    zero_f1_l.append(class_report["no interpretation"]["f1-score"])
-    zero_precision_l.append(class_report["no interpretation"]["precision"])
-    zero_recall_l.append(class_report["no interpretation"]["recall"])
+    formal_f1_l.append(class_report["FORMAL"]["f1-score"])
+    formal_precision_l.append(class_report["FORMAL"]["precision"])
+    formal_recall_l.append(class_report["FORMAL"]["recall"])
+
+    none_f1_l.append(class_report["NONE"]["f1-score"])
+    none_precision_l.append(class_report["NONE"]["precision"])
+    none_recall_l.append(class_report["NONE"]["recall"])
 
 macro_f1 = sum(macro_f1_l) / len(macro_f1_l)
 macro_precision = sum(macro_precision_l) / len(macro_precision_l)
@@ -155,22 +188,22 @@ weighted_f1 = sum(weighted_f1_l) / len(weighted_f1_l)
 weighted_precision = sum(weighted_precision_l) / len(weighted_precision_l)
 weighted_recall = sum(weighted_recall_l) / len(weighted_recall_l)
 
-one_f1 = sum(one_f1_l) / len(one_f1_l)
-one_precision = sum(one_precision_l) / len(one_precision_l)
-one_recall = sum(one_recall_l) / len(one_recall_l)
+grand_f1 = sum(grand_f1_l) / len(grand_f1_l)
+grand_precision = sum(grand_precision_l) / len(grand_precision_l)
+grand_recall = sum(grand_recall_l) / len(grand_recall_l)
 
-zero_f1 = sum(zero_f1_l) / len(zero_f1_l)
-zero_precision = sum(zero_precision_l) / len(zero_precision_l)
-zero_recall = sum(zero_recall_l) / len(zero_recall_l)
+formal_f1 = sum(formal_f1_l) / len(formal_f1_l)
+formal_precision = sum(formal_precision_l) / len(formal_precision_l)
+formal_recall = sum(formal_recall_l) / len(formal_recall_l)
+
+none_f1 = sum(none_f1_l) / len(none_f1_l)
+none_precision = sum(none_precision_l) / len(none_precision_l)
+none_recall = sum(none_recall_l) / len(none_recall_l)
 
 
 model_dict = {
-    "model": "t5_small_finetuned_binary",
+    "model": "t5_finetuned",
     "split": "averages",
-
-    "macro_f1": round(macro_f1, 3),
-    "macro_precision": round(macro_precision, 3),
-    "macro_recall": round(macro_recall, 3),
 
     "macro_f1": round(macro_f1, 3),
     "macro_precision": round(macro_precision, 3),
@@ -180,17 +213,21 @@ model_dict = {
     "weighted_precision": round(weighted_precision, 3),
     "weighted_recall": round(weighted_recall, 3),
 
-    "1_f1": round(one_f1, 3),
-    "1_precision": round(one_precision, 3),
-    "1_recall": round(one_recall, 3),
+    "grand_f1": round(grand_f1, 3),
+    "grand_precision": round(grand_precision, 3),
+    "grand_recall": round(grand_recall, 3),
 
-    "0_f1": round(zero_f1, 3),
-    "0_precision": round(zero_precision, 3),
-    "0_recall": round(zero_recall, 3),
+    "formal_f1": round(formal_f1, 3),
+    "formal_precision": round(formal_precision, 3),
+    "formal_recall": round(formal_recall, 3),
 
+    "none_f1": round(none_f1, 3),
+    "none_precision": round(none_precision, 3),
+    "none_recall": round(none_recall, 3),
 }
+
 new_row = pd.DataFrame(model_dict, index = [0])
 full_df = pd.concat([full_df, new_row])
 
-full_df.to_csv(os.path.join(output_path, 't5_small_binary_results.csv'))
+full_df.to_csv(os.path.join(output_path, 't5_base_finetuned_results.csv'))
 

@@ -26,8 +26,6 @@ output_path = os.path.join(formalism_dir, 'results', 't5-hierarchical')
 interpretation_df = pd.read_csv(labeled_data_path)
 interpretation_df = interpretation_df[interpretation_df['class'].notna()]
 interpretation_df["interpretation"] = np.where(interpretation_df["class"].isin(["FORMAL", "GRAND"]), "interpretation", "no interpretation")
-# interpretation_df["class_num"] = np.where(interpretation_df["class"] == "GRAND", 1, 0)
-
 
 for model_type in model_types:
     full_df = pd.DataFrame()
@@ -100,16 +98,6 @@ for model_type in model_types:
             else:
                 class_predictions.append("NONE")
 
-
-        # interp_df["predicted_nums"] = class_predictions
-
-        # name_dic = {
-        #     "2": "NONE",
-        #     "1": "GRAND",
-        #     "0": "FORMAL"
-        # }
-
-        # interp_df["predicted_classes"] = interp_df["predicted_nums"].map(name_dic)
         interp_df["predicted_class"] = class_predictions
         y_predicted = interp_df["predicted_class"].tolist()
         y_test = interp_df["class"].tolist()

@@ -3,14 +3,8 @@ import numpy as np
 import os
 from collections import Counter
 
-import matplotlib.pyplot as plt
-import seaborn as sns
+from sklearn.metrics import accuracy_score, classification_report
 
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
-
-
-# import evaluate
 from datasets import load_dataset, Dataset
 import torch
 

@@ -6,8 +6,6 @@ from collections import Counter
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
 
-
-# import evaluate
 from datasets import load_dataset, Dataset
 import torch
 
@@ -15,14 +13,10 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, Auto
 from transformers import DistilBertTokenizerFast, DistilBertForSequenceClassification
 from transformers import Trainer, TrainingArguments
 
-
-
 model_types = ["legal-bert", 'bert', 'distilbert']
 device_name = 'cuda'    
 max_length = 512
 epoch_num = 3
-
-
 
 formalism_dir = os.getcwd()
 labeled_data_path = os.path.join(formalism_dir, 'labeled_data', 'final_cleaned_paragraphs.csv')
@@ -30,14 +24,12 @@ output_path = os.path.join(formalism_dir, 'results', 'hierarchical')
 
 errors_dir = os.path.join(formalism_dir, 'errors')
 
-#####
 if not os.path.exists(errors_dir):
    os.makedirs(errors_dir)
 
 hierarchical_errors_dir = os.path.join(errors_dir, 'hierarchical')
 if not os.path.exists(hierarchical_errors_dir):
    os.makedirs(hierarchical_errors_dir)
-#####
 
 
 interpretation_df = pd.read_csv(labeled_data_path)
@@ -146,7 +138,7 @@ for model_type in model_types:
         interpretation_test_df["predicted_classes"] = interpretation_test_df["predicted_nums"].map(name_dic)
         y_predicted = interpretation_test_df["predicted_classes"].tolist()
 
-        #####
+
         predictions_df = pd.DataFrame(
             {'section_id': interpretation_test_df["section_id"].tolist(),
             'gold': y_test,
@@ -155,7 +147,7 @@ for model_type in model_types:
             })
         errors_df = predictions_df.query('gold != predicted')
         errors_df.to_csv(os.path.join(hierarchical_errors_dir, f"{model_type}_{split}_errors.csv"))
-        #####
+
 
         class_report = classification_report(y_test, y_predicted, output_dict=True)
 

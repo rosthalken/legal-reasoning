@@ -3,14 +3,9 @@ import numpy as np
 import os
 from collections import Counter
 
-import matplotlib.pyplot as plt
-import seaborn as sns
 
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
+from sklearn.metrics import accuracy_score, classification_report
 
-
-# import evaluate
 from datasets import load_dataset, Dataset
 import torch
 
@@ -24,7 +19,6 @@ device_name = 'cuda'
 max_length = 512
 epoch_num = 3
 
-
 formalism_dir = os.getcwd()
 labeled_data_path = os.path.join(formalism_dir, 'labeled_data', 'final_cleaned_paragraphs.csv')
 output_path = os.path.join(formalism_dir, 'results', 'hierarchical')
@@ -34,7 +28,7 @@ interpretation_df = interpretation_df[interpretation_df['class'].notna()]
 interpretation_df["interpretation"] = np.where(interpretation_df["class"].isin(["FORMAL", "GRAND"]), 1, 0)
 
 for model_type in model_types:
-    for split in range(0, 30):
+    for split in range(0, 5):
         interpretation_model_path = os.path.join(output_path, 'models', f'{model_type}_interpretation_{split}_test')
         split_id_file = os.path.join(formalism_dir, 'train_test_splits', f'split_{split}')
 
@@ -56,7 +50,7 @@ for model_type in model_types:
 
         if model_type == "distilbert":
             model_name = 'distilbert-base-uncased'  
-            tokenizer = DistilBertTokenizerFast.from_pretrained(model_name) # The model_name needs to match our pre-trained model.
+            tokenizer = DistilBertTokenizerFast.from_pretrained(model_name)
             model = DistilBertForSequenceClassification.from_pretrained(model_name, num_labels=len(id2label)).to(device_name)
         elif model_type == "legal-bert":
             model_name = "nlpaueb/legal-bert-base-uncased"

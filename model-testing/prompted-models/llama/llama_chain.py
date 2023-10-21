@@ -40,7 +40,6 @@ full_df = pd.DataFrame()
 interpretation_df = pd.read_csv(labeled_data_path)
 interpretation_df = interpretation_df[interpretation_df['class'].notna()]
 
-
 for split in range(0, 5):
 
   split_id_file = os.path.join(formalism_dir, 'train_test_splits', f'split_{split}')

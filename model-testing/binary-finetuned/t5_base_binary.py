@@ -2,7 +2,7 @@ import numpy as np
 import os
 import pandas as pd
 from   pathlib import Path
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
+from sklearn.metrics import classification_report
 import time
 import torch
 

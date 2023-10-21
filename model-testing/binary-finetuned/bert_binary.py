@@ -6,15 +6,10 @@ from collections import Counter
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
-from sklearn.metrics import confusion_matrix #, ConfusionMatrixDisplay
+from sklearn.metrics import accuracy_score, classification_report
 
-
-# import evaluate
 from datasets import load_dataset, Dataset
 import torch
-
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer
 from transformers import DistilBertTokenizerFast, DistilBertForSequenceClassification
 from transformers import Trainer, TrainingArguments
@@ -64,7 +59,7 @@ for label_name in labels:
       zero_recall_l = []
 
       
-      for split in range(0, 10):
+      for split in range(0, 5):
 
         split_id_file = os.path.join(formalism_dir, 'train_test_splits', f'split_{split}')
 
@@ -207,10 +202,6 @@ for label_name in labels:
             "0_f1": round(class_report["0"]["f1-score"], 3),
             "0_precision": round(class_report["0"]["precision"], 3), 
             "0_recall": round(class_report["0"]["recall"], 3), 
-
-            # "none_f1": round(class_report["NONE"]["f1-score"], 3),
-            # "none_precision": round(class_report["NONE"]["precision"], 3), 
-            # "none_recall": round(class_report["NONE"]["recall"], 3), 
         }
 
         new_row = pd.DataFrame(sample_dict, index = [0])
@@ -233,22 +224,6 @@ for label_name in labels:
       zero_precision = sum(zero_precision_l) / len(zero_precision_l) 
       zero_recall = sum(zero_recall_l) / len(zero_recall_l)
     
-      # grand_f1 = sum(grand_f1_l) / len(grand_f1_l)
-      # grand_precision = sum(grand_precision_l) / len(grand_precision_l) 
-      # grand_recall = sum(grand_recall_l) / len(grand_recall_l)
-    
-      # formal_f1 = sum(formal_f1_l) / len(formal_f1_l)
-      # formal_precision = sum(formal_precision_l) / len(formal_precision_l) 
-      # formal_recall = sum(formal_recall_l) / len(formal_recall_l)
-    
-      # none_f1 = sum(none_f1_l) / len(none_f1_l)
-      # none_precision = sum(none_precision_l) / len(none_precision_l) 
-      # none_recall = sum(none_recall_l) / len(none_recall_l)
-
-
-
-
-      # create all the things to save
       sample_dict = {
           "label": label_name,
           "model": model_type,

@@ -3,12 +3,9 @@ import numpy as np
 import os
 from collections import Counter
 
-
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
 
-
-# import evaluate
 from datasets import load_dataset, Dataset
 import torch
 
@@ -50,7 +47,7 @@ for model_type in model_types:
         interpretation_train_df = interpretation_df[interpretation_df["section_id"].isin(train_ids)]
         interpretation_test_df = interpretation_df[~interpretation_df["section_id"].isin(train_ids)]
 
-        tokenizer = AutoTokenizer.from_pretrained(model_type) # load in our tokenizer
+        tokenizer = AutoTokenizer.from_pretrained(model_type) 
 
         train_dataset = Dataset.from_pandas(interpretation_train_df)
         test_dataset = Dataset.from_pandas(interpretation_test_df)

@@ -51,7 +51,6 @@ def check_for_close_substrings(string):
     return any([check_1, check_2])
 
 def convert_to_clean_df(data_dic):
-    # flagging for discussion 
     """
     Apply cleaning functions and keep cases with at least 200 words (for annotation set only). 
     """

@@ -22,9 +22,7 @@ intro_statement = "There are three possible labels to describe legal interpretat
 formal_description = "FORMAL theory is a legal decision made according to a rule, often viewing the law as a closed and mechanical system. It screens the decision-maker off from the political, social, and economic choices involved in the decision. "
 grand_description = "GRAND theory is legal decision that views law as an open-ended and on-going enterprise for the production and improvement of decisions that make sense on their face and in light of political, social, and economic factors."
 none_description = "NONE is a passage or mode of reasoning that does not reflect either the Grand or Formal approaches. Note that this coding would include areas of substantive law outside of statutory interpretation, including procedural matters. "
-# prompt_text = "Determine the type of legal interpretation in the following passage. Return a single choice from GRAND, FORMAL, or NONE."
 
-# prompt = f"{intro_statement} \n\n {formal_description}\n\n {grand_description}\n\n {none_description}\n\n {prompt_text}"
 prompt = f"{intro_statement} \n\n {formal_description}\n\n {grand_description}\n\n {none_description}\n\n"
 
 def get_interp_type(prompt, text):

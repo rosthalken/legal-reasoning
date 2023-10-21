@@ -7,8 +7,6 @@ from collections import Counter
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
 
-
-# import evaluate
 from datasets import load_dataset, Dataset
 import torch
 
@@ -53,10 +51,7 @@ for model_type in model_types:
         interpretation_train_df = interpretation_train_df[interpretation_df['class'] != "NONE"] 
         interpretation_test_df = interpretation_test_df[interpretation_test_df['class'] != "NONE"]
 
-        # interpretation_train_df["class_num"] = np.where(interpretation_train_df["class"] == "GRAND", 1, 0)
-        # interpretation_test_df["class_num"] = np.where(interpretation_test_df["class"] == "GRAND", 1, 0)
-
-        tokenizer = AutoTokenizer.from_pretrained(model_type) # load in our tokenizer
+        tokenizer = AutoTokenizer.from_pretrained(model_type)
 
         train_dataset = Dataset.from_pandas(interpretation_train_df)
         test_dataset = Dataset.from_pandas(interpretation_test_df)
