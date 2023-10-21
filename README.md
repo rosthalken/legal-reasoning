@@ -1,11 +1,10 @@
-# legal-interpretation
+# legal-reasoning
 
 1. Filter cases to only those decided by the US Supreme Court on or after 1870.  
 `python filter_cases.py`
 
 2. Collect samples of data for annotation.  
 `python create_samples.py --output_name annotation_samples --size_sample`
-
 
 3. Evaluate model performance.  
 A number of files within the `model-testing` folder contain all model testing scripts. 
