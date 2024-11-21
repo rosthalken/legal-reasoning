@@ -17,3 +17,5 @@ A number of files within the `model-testing` folder contain all model testing sc
 
 6. Divide metadata and predictions data.   
 `python split_predictions.py`
+
+Email ret85@cornell.edu to get access to the annotated data. The data will be posted publicly at a later date. 
