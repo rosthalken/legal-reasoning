@@ -18,4 +18,21 @@ A number of files within the `model-testing` folder contain all model testing sc
 6. Divide metadata and predictions data.   
 `python split_predictions.py`
 
-Email ret85@cornell.edu to get access to the annotated data. The data will be posted publicly at a later date. 
+The annotation data for this project is available [here](https://drive.google.com/file/d/1i7dcshwcgCBF3TVLbNBC-Hutw8qVreTq/view?usp=sharing). 
+
+If you use this data, please cite:
+@inproceedings{thalken-etal-2023-modeling,
+    title = "Modeling Legal Reasoning: {LM} Annotation at the Edge of Human Agreement",
+    author = "Thalken, Rosamond  and
+      Stiglitz, Edward  and
+      Mimno, David  and
+      Wilkens, Matthew",
+    booktitle = "Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing",
+    month = dec,
+    year = "2023",
+    address = "Singapore",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2023.emnlp-main.575",
+    doi = "10.18653/v1/2023.emnlp-main.575",
+    pages = "9252--9265",
+}
