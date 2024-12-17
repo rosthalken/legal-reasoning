@@ -21,7 +21,7 @@ A number of files within the `model-testing` folder contain all model testing sc
 The annotation data for this project is available [here](https://drive.google.com/file/d/1i7dcshwcgCBF3TVLbNBC-Hutw8qVreTq/view?usp=sharing). 
 
 If you use this data, please cite:
-@inproceedings{thalken-etal-2023-modeling,
+| @inproceedings{thalken-etal-2023-modeling,
     title = "Modeling Legal Reasoning: {LM} Annotation at the Edge of Human Agreement",
     author = "Thalken, Rosamond  and
       Stiglitz, Edward  and
