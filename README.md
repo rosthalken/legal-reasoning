@@ -18,4 +18,9 @@ A number of files within the `model-testing` folder contain all model testing sc
 6. Divide metadata and predictions data.   
 `python split_predictions.py`
 
-The annotation data for this project is available [here](https://drive.google.com/file/d/1i7dcshwcgCBF3TVLbNBC-Hutw8qVreTq/view?usp=sharing). If you use this data, please cite [Modeling Legal Reasoning: LM Annotation at the Edge of Human Agreement](https://aclanthology.org/2023.emnlp-main.575.pdf).
+The annotation data for this project is available [here](https://drive.google.com/file/d/1i7dcshwcgCBF3TVLbNBC-Hutw8qVreTq/view?usp=sharing). 
+
+The fine-tuned model can be downloaded [here](https://huggingface.co/rosamondthalken/legal-reasoning).
+
+If you use this data, please cite [Modeling Legal Reasoning: LM Annotation at the Edge of Human Agreement](https://aclanthology.org/2023.emnlp-main.575.pdf).
+
